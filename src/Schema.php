@@ -509,7 +509,11 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $result = $data;
         foreach ($this->allOf as $index => $item) {
-            $result = self::unboolSchema($item)->process($data, $options, $path . '->allOf[' . $index . ']');
+            $schema = self::unboolSchema($item);
+            $result = $schema->process($data, $options, $path . '->allOf[' . $index . ']');
+            if (! $options->skipValidation) {
+                $data = $schema->out($result);
+            }
         }
         return $result;
     }
